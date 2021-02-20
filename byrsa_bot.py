@@ -1,5 +1,4 @@
 import byrsa_commands as b_cmd
-import byrsa_db as b_db
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram.utils.request import Request
 import logging
@@ -51,6 +50,12 @@ logging.basicConfig(
 # ------------------------------- HANDLERS ---------------------------------- #
 ###############################################################################
 
+
+print("Adding handlers...")
+# Command Handlers
+dispatcher.add_handler(CommandHandler('start', b_cmd.start))
+dispatcher.add_handler(CommandHandler('help', b_cmd.help))
+dispatcher.add_handler(CommandHandler('asistencia', b_cmd.asistencia))
 # Unknown command handler
 dispatcher.add_handler(MessageHandler(Filters.command, b_cmd.unknown))
 
