@@ -1,9 +1,5 @@
 import byrsa_db as b_db
-from datetime import date
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram import ReplyKeyboardMarkup
-from telegram.ext import ConversationHandler, CommandHandler, Filters
-from telegram.ext import CallbackQueryHandler, MessageHandler
 from emoji import emojize
 
 ###############################################################################
