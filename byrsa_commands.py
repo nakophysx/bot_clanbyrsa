@@ -4,6 +4,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler, CommandHandler, Filters
 from telegram.ext import CallbackQueryHandler, MessageHandler
+from emoji import emojize
 
 ###############################################################################
 # ----------------------------- DATA STRUCTURES ----------------------------- #
@@ -27,11 +28,12 @@ def asistencia(context, update):
     for i in range(1, args.len()+1):
         activity_info += args[i]
     id = b_db.new_attendace_list(activity_info)
-    keyboard = [[InlineKeyboardButton("Voy", callback_data='att-SI-'+str(id)),
-                 InlineKeyboardButton("No voy",
-                                      callback_data='att-NO-'+str(id)),
-                 InlineKeyboardButton("Depende",
-                                      callback_data='att-DEPENDE-'+str(id))]]
+    keyboard = [[InlineKeyboardButton(emojize(":+1:"),
+                                      callback_data='att-SI-'+str(id)),
+                 InlineKeyboardButton(emojize("question:"),
+                                      callback_data='att-DEPENDE-'+str(id)),
+                 InlineKeyboardButton(emojize(":-1:"),
+                                      callback_data='att-NO-'+str(id))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     attendance_text = b_db.get_attendance_text(update.message.chat.id,
                                                update.message.message_id)
