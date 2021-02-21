@@ -24,22 +24,24 @@ def help(update, context):
 
 def asistencia(update, context):
     args = update.message.text.split()
-    if (args.len() >= 2):
+    if (len(args) >= 2):
         activity_info = ''
         for i in range(1, args.len()+1):
             activity_info += args[i]
     else:
         activity_info = 'ACB'
+
     id = b_db.new_attendace_list(activity_info)
-    keyboard = [[InlineKeyboardButton(emojize(":+1:"),
+    print("new list created named:" + activity_info)
+    keyboard = [[InlineKeyboardButton(emojize(":thumbs_up:"),
                                       callback_data='att-SI-'+str(id)),
-                 InlineKeyboardButton(emojize("question:"),
+                 InlineKeyboardButton(emojize(":question:"),
                                       callback_data='att-DEPENDE-'+str(id)),
                  InlineKeyboardButton(emojize(":-1:"),
                                       callback_data='att-NO-'+str(id))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    attendance_text = b_db.get_attendance_text(update.message.chat.id,
-                                               update.message.message_id)
+    attendance_text = b_db.get_attendance_text(id)
+    print(attendance_text)
     update.message.reply_text(attendance_text, reply_markup=reply_markup,
                               quote=True)
 
@@ -68,6 +70,8 @@ def button(update, context):
 def add_participant(update, context, data):
     args = data.split('-')
     b_db.add_attendant(update.effective_user.id, args[1], args[0])
+    attendance_text = b_db.get_attendance_text(args[1])
+    update.callback_query.edit_message_text(attendance_text)
 
 ###############################################################################
 # ------------------------------- DICTIONARY -------------------------------- #

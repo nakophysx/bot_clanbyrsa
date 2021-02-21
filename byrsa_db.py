@@ -15,7 +15,7 @@ def new_attendace_list(info):
     connection = sqlite3.connect('clan.db')
     list_id = get_list_id(connection)
     c = connection.cursor()
-    c.execute("INSERT INTO LISTA VALUES (?, ?, ?)",
+    c.execute("INSERT INTO LISTA VALUES (?, ?)",
               (list_id, info))
     connection.commit()
     connection.close()
@@ -25,7 +25,7 @@ def new_attendace_list(info):
 def new_rover(u_id, nickname):
     connection = sqlite3.connect('clan.db')
     c = connection.cursor()
-    c.execute("SELECT * FROM ROVER WHERE ID_USUARIO=?", u_id)
+    c.execute("SELECT * FROM ROVER WHERE ID_USUARIO=?", (u_id,))
     if (c.fetchone()[0] is None):
         c.execute("INSERT INTO ROVER VALUES (?, ?)", (u_id, nickname))
     else:
@@ -56,16 +56,15 @@ def get_attendance_text(l_id):
     # Fetch list name
     connection = sqlite3.connect('clan.db')
     c = connection.cursor()
-    c.execute("SELECT INFO_L FROM LISTA WHERE ID_LISTA=?", (l_id))
+    c.execute("SELECT INFO_L FROM LISTA WHERE ID_LISTA=?", (l_id,))
     list_info = c.fetchone()[0]
 
     # Fetch attendants
     attendants = list()
     non_attendants = list()
     maybe_attendants = list()
-    c.execute('''SELECT NOMBRE_U, ESTADO FROM ASISTENCIA NATURAL JOIN ROVER
-    WHERE ID_LISTA=?''',
-              (l_id))
+    c.execute('''SELECT NOMBRE_U, ESTADO FROM ASISTENCIA JOIN ROVER
+    WHERE ID_LISTA=:l_id''', {'l_id': l_id})
     untreated_list = c.fetchall()
     connection.close()
 
@@ -88,3 +87,4 @@ def get_attendance_text(l_id):
     text += "\nDEPENDE:"
     for s in maybe_attendants:
         text += "\n-" + s
+    return text
