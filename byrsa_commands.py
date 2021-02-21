@@ -18,11 +18,18 @@ def start(update, context):
         "Te has inscrito correctamente en la base de datos del bot")
 
 
-def asistencia(context, update):
+def help(update, context):
+    update.message.reply_text("Usa /asistencia para crear una nueva lista")
+
+
+def asistencia(update, context):
     args = update.message.text.split()
-    activity_info = ''
-    for i in range(1, args.len()+1):
-        activity_info += args[i]
+    if (args.len() >= 2):
+        activity_info = ''
+        for i in range(1, args.len()+1):
+            activity_info += args[i]
+    else:
+        activity_info = 'ACB'
     id = b_db.new_attendace_list(activity_info)
     keyboard = [[InlineKeyboardButton(emojize(":+1:"),
                                       callback_data='att-SI-'+str(id)),

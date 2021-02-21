@@ -4,10 +4,11 @@ import sqlite3
 def get_list_id(connection):
     c = connection.cursor()
     c.execute('SELECT MAX(ID_LISTA) FROM LISTA')
-    id = c.fetchone()[0]+1
+    id = c.fetchone()[0]
     if (id is None):
-        id = 0
-    return id
+        return 0
+    else:
+        return id+1
 
 
 def new_attendace_list(info):
@@ -24,8 +25,12 @@ def new_attendace_list(info):
 def new_rover(u_id, nickname):
     connection = sqlite3.connect('clan.db')
     c = connection.cursor()
-    c.execute("SELECT * FROM ROVER WHERE ID-ID_USUARIO=?", u_id)
-    c.execute("INSERT INTO ROVER VALUES (?, ?)", (u_id, nickname))
+    c.execute("SELECT * FROM ROVER WHERE ID_USUARIO=?", u_id)
+    if (c.fetchone()[0] is None):
+        c.execute("INSERT INTO ROVER VALUES (?, ?)", (u_id, nickname))
+    else:
+        c.execute('UPDATE ROVER SET NOMBRE_U=:nickname WHERE ID_USUARIO=:u_id',
+                  {'u_id': u_id, 'nickname': nickname})
     connection.commit()
     connection.close()
 
