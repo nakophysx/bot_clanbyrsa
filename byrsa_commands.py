@@ -7,6 +7,16 @@ from emoji import emojize
 ###############################################################################
 
 
+def get_att_markup(id):
+    att_markup = InlineKeyboardMarkup(
+        [[InlineKeyboardButton(emojize(":thumbs_up:", use_aliases=True),
+                               callback_data='att-YES-'+str(id)),
+          InlineKeyboardButton(emojize(":question:", use_aliases=True),
+                               callback_data='att-DEPENDE-'+str(id)),
+          InlineKeyboardButton(emojize(":thumbs_down:", use_aliases=True),
+                               callback_data='att-NO-'+str(id))]])
+    return att_markup
+
 ###############################################################################
 # ---------------------------------- CMD ------------------------------------ #
 ###############################################################################
@@ -32,17 +42,8 @@ def asistencia(update, context):
         activity_info = 'ACB'
 
     id = b_db.new_attendace_list(activity_info)
-    print("new list created named:" + activity_info)
-    keyboard = [[InlineKeyboardButton(emojize(":thumbs_up:"),
-                                      callback_data='att-SI-'+str(id)),
-                 InlineKeyboardButton(emojize(":question:"),
-                                      callback_data='att-DEPENDE-'+str(id)),
-                 InlineKeyboardButton(emojize(":-1:"),
-                                      callback_data='att-NO-'+str(id))]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
     attendance_text = b_db.get_attendance_text(id)
-    print(attendance_text)
-    update.message.reply_text(attendance_text, reply_markup=reply_markup,
+    update.message.reply_text(attendance_text, reply_markup=get_att_markup(id),
                               quote=True)
 
 
@@ -58,20 +59,22 @@ def unknown(update, context):
 
 
 def button(update, context):
-    update.callback_query.answer()
     # data is a string shaped like this: "dict_key-argument0-argument1..."
     data = update.callback_query.data.split('-', 1)
     if data[0] in cmd_dictionary:
         cmd_dictionary[data[0]](update, context)
     else:
         sbr_dictionary[data[0]](update, context, data[1])
+    update.callback_query.answer()
 
 
 def add_participant(update, context, data):
     args = data.split('-')
     b_db.add_attendant(update.effective_user.id, args[1], args[0])
     attendance_text = b_db.get_attendance_text(args[1])
-    update.callback_query.edit_message_text(attendance_text)
+    update.callback_query.edit_message_text(attendance_text,
+                                            reply_markup=get_att_markup(args[1]
+                                                                        ))
 
 ###############################################################################
 # ------------------------------- DICTIONARY -------------------------------- #

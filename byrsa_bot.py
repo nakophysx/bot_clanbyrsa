@@ -1,11 +1,12 @@
 import byrsa_commands as b_cmd
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import CallbackQueryHandler
 from telegram.utils.request import Request
 import logging
 import telegram.bot
 from telegram.ext import messagequeue as mq
-import os
-TOKEN = os.environ.get('TOKEN')
+from os import environ
+TOKEN = environ.get('TOKEN')
 
 ###############################################################################
 # --------------------------- ANTI-FLOOD CLASS------------------------------- #
@@ -55,6 +56,7 @@ print("Adding handlers...")
 # Command Handlers
 dispatcher.add_handler(CommandHandler('start', b_cmd.start))
 dispatcher.add_handler(CommandHandler('help', b_cmd.help))
+updater.dispatcher.add_handler(CallbackQueryHandler(b_cmd.button))
 dispatcher.add_handler(CommandHandler('asistencia', b_cmd.asistencia))
 # Unknown command handler
 dispatcher.add_handler(MessageHandler(Filters.command, b_cmd.unknown))
